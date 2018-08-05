@@ -1,0 +1,93 @@
+1.自定义组件
+组件的两个概念：
+   组件类：（工厂函数，构造函数，类）MyComponnent
+   组件标签：<MyComponent/>
+   
+定义组件类：
+  1.工厂函数（定义简单的组件）
+  function MyConponent(){
+    return <h1> 工厂函数自定义组件</h1>
+  }
+  
+  2.ES6语法（定义复杂的组件）
+  class MyConponnent extends React.Component{
+   render(){//重写方法
+     return <h1>es6自定义组件</h1>
+   }
+  }
+  
+  3.es5语法
+  var Mycomponent=React.creatClass({
+   return <h1>es5自定义组件</h1>
+  })
+  
+2.渲染组件标签：
+ ReactDOM.render(<MyComponennt/>,document.getElementById('root'));
+ 
+3.注意：
+  1.返回的组件类必须是首字母大写
+  2.虚拟dom元素必须只有一个根元素
+  3.虚拟dom元素必须有结束标签
+  
+4.ReactDOM.render()渲染组件标签的基本流程
+   1.React内部会创建组件实例对象
+   2.得到包含的虚拟dom并解析为真实dom
+   3.插入到制定元素的页面元素的内部
+   
+5.组件的三大属性--props      refs states
+  1.props属性
+      每个组件对象都会有的props（properties的简写）属性
+      组件标签的所有属性都保存在pops中
+      组件内部读取某个属性值：this.props.propertyName
+      作用：通过标签属性从组件外向组件内部传递数据
+       对props中的属性值进行类型限制和必要性限制
+            Person.propType={
+               name:React.PropTypes.string.isRequired,
+              age:React.PropType.number.isRequired,
+              xxx:f=>f
+             }
+       默认组件属性值
+           Person.defaultProps={
+             name:'Owen'
+           }
+         组件的构造函数：
+         constructor(props){
+            super(props);
+            console.log(props);//查看所有的组件属性
+         }
+         
+         举例
+         
+         class PersonInfo extends React.Componnent{
+             constructor(props){
+                super(props)            
+              }
+             render(){
+                return(
+                <ul>
+                    <li>姓名：{this.props.name}</li>                   
+                    <li>性别：{this.props.sex}</li> 
+                    <li>年龄：{this.props.age}</li>         
+                </ul>
+                )
+              }
+         }
+         PersonInfo.defaultProps={
+            sex:'',
+            age:18
+         }
+         
+         let person={
+            name:'tom',
+            sex:'女',
+            age:18
+         }
+         
+         
+         
+         
+  2.refs属性
+  3.state属性
+
+  
+  
