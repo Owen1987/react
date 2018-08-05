@@ -1,0 +1,46 @@
+ 1.  React 中使用 JSX 来描述用户界面。
+ 全称：javascript xml 
+ 作用：用来创建虚拟dom（元素）对象
+ const element=<h1>hello,Owen</h1>  
+ 注意：它既不会字符串也不是html／xml标签
+ 注意：它最终产生的是js对象
+ 标签名任意：html标签或者其它标签，属性名任意
+ 
+ 2.基本语法规则
+   遇到 < 开头 以标签的语法解析：html同名标签转换魏html同名元素，其它标签需要特别解析
+   遇到以{开头的代码，则以javascript的语法解析：标签终的代码必须以{}包含
+3.babel.js的作用：
+  将es6转化成Es5
+  将jsx转化成js
+  只要使用到了jsx，script标签的type=“text／babel”
+4.创建虚拟dom的两种方式
+   1---纯js创建，不推荐
+   var element=React.creatElement('h1',{id:'myTitle'},'hello');
+   2--jsx
+   <h1 id='mytitle' name={name} >hello,Owen{mytitle}</h1>
+  
+5.渲染虚拟dom
+ 语法：ReactDOM.render(virtualDOM,comtainerDOM)
+ 将虚拟dom渲染到真实容器dom中
+     ReactDOM.render('h1',document.getElementById('root'))
+
+举例
+
+var names=['Owen','jack','linda']
+let vDOM=(
+ <ul>
+  {
+    names.map(function(name,index){
+    
+    return <li>{name}</li>    
+    })  
+  }
+  </ul>
+)
+   ReactDOM.render(vDOM,document.getElementById('root'))
+   
+   等效：array.map()经常使用
+   ReactDOM.render(<ul>{names.map((name)=>{return <li>{name}</li>})}</ul>,document.getElementById('root'))
+   
+   
+   
