@@ -22,6 +22,30 @@
   })
   
 2.渲染组件标签：
+1.自定义组件
+组件的两个概念：
+   组件类：（工厂函数，构造函数，类）MyComponnent
+   组件标签：<MyComponent/>
+   
+定义组件类：
+  1.工厂函数（定义简单的组件）
+  function MyConponent(){
+    return <h1> 工厂函数自定义组件</h1>
+  }
+  
+  2.ES6语法（定义复杂的组件）
+  class MyConponnent extends React.Component{
+   render(){//重写方法
+     return <h1>es6自定义组件</h1>
+   }
+  }
+  
+  3.es5语法
+  var Mycomponent=React.creatClass({
+   return <h1>es5自定义组件</h1>
+  })
+  
+2.渲染组件标签：
  ReactDOM.render(<MyComponennt/>,document.getElementById('root'));
  
 3.注意：
@@ -35,7 +59,7 @@
    3.插入到制定元素的页面元素的内部
    
 5.组件的三大属性--props      refs states
-  1.props属性
+  1.1props属性
       每个组件对象都会有的props（properties的简写）属性
       组件标签的所有属性都保存在pops中
       组件内部读取某个属性值：this.props.propertyName
@@ -56,7 +80,7 @@
             console.log(props);//查看所有的组件属性
          }
          
-         举例
+         举例：通过prop向组件内部传递person数据
          
          class PersonInfo extends React.Componnent{
              constructor(props){
@@ -73,21 +97,191 @@
               }
          }
          PersonInfo.defaultProps={
-            sex:'',
+            sex:'男',
             age:18
          }
-         
+         PersonInfo.propTypes={
+           name:React.PropTypes.string.isRequired,
+           sex:React.PropTypes.string,
+          age:React.PropTypes.number
+         }
          let person={
             name:'tom',
             sex:'女',
             age:18
          }
+      ReactDOM.render(<PersonInfo name={person.name} sex={person.se} age={person.age}/>,document.getElementById('root'))
+     使用es6的写法： 
+     ReactDOM.render(<PersonInfo {...person}>,document.getElementById('root'))
          
-         
-         
-         
-  2.refs属性
+      1.2组件的composing(嵌套组合)
+        1.拆分组件：拆分界面，抽取组件
+        2.分析确定传递数据以及数据类型   
+       function Welcome(props){
+           return <h2>Welcome {props.name}</h2>   
+        }
+      function App extends React.Component{
+         render(){
+           return(
+              <div>
+                  {
+                  this.props.names.map((name,index)=>{
+                      return <Welcome name={name} key={index}/>
+                      }) 
+                  }
+              </div>
+           )
+         }
+       }
+    let names=['Owen','Jack','Linda'];
+    ReactDOM.render(<App  name={names}/>,document.getElementById('root'))
+    过程：
+       创建App的实例对象
+       调用其render()，得到虚拟dom对象
+          <div>
+            <Welcome name='Owen'/>
+            <Welcome  name='jack'/>
+            <Welcom name='Linda'>
+         </div>
+     找出其中的组件标签<Welcom>调用对应的Welcome函数，得到对应的虚拟DOM，替换<Welcome/>
+         <div>
+               <h2>Welcome Owen!</h2>
+               <h2>Welcome jack</h2>
+               <h2>Welcome Linda</h2>
+         </div>
+      将Vdom转化为真实DOM插入root对应的div中
+  2.refs属性（references）
+       组件内的标签都可以定义ref属性来标示自己
+       在组件中可以通过this.refs.refName来得到自己相应的真实dom对象
+       作用：用于操作制定的ref属性的dom元素对象（表单元素居多）
+          如：<input ref='userName'/>
+             this.refs.userName//返回input对象
+       事件处理：
+         通过onXxx属性指定组件的事件处理函数（注意大小写）
+             React使用的是自定义（合成）事件，而不是DOM事件
+             React中的事件是通过委托方式处理的（委托给组件最外层的元素）
+       通过event.target得到发生事件的DOM元素对象
+         <input onFocus={this.handleClick}/>
+         handleFocus(event){
+          event.target //返回input对象
+         }
+      强烈注意：
+             1.组件中内置方法的this为组件对象
+             2.组件中自定义的方法中的this为null，但es6的箭头函数除外，箭头函数本身没有this，它的this指向外层即组件对象
+        
+        举例：
+        class Mycomponent extends React.Component{
+          constructor(pros){
+            super(props);
+            this.handleClick=this.handleClick.bind(this);
+            this.handleBlur=this.handleBlur.bind(this);
+          }
+          handleClick(event){
+              var input=this.refs.msg;
+              alert(input.value);
+         }
+         handleBlur(event){
+             alert(event.target.value)
+        }
+           render(){
+              return(
+                 <div>
+                    <input type='text' ref='msg'/>
+                    <button onClick={this.handleClick}>提示输入数据</button>
+                    <input type='text'onBlur={this.handleBlur}  placeholder='失去焦点提示数据'>
+                 </div>
+               )
+             }
+        }
+
+      ReactDOM.render(<MyComponent/>,document.getElemetById('root'))
+
   3.state属性
+    组件被成为‘状态机’通过更新组件的状态值来更新对应的页面显示（重新渲染）
+     1.初始化状态：
+       constructor(props){
+          super(props);
+          this.state={
+            stateProp1:value1,
+            stateProp2:value2
+         } 
+      }
+     2. 读取某个状态值
+        this.state.statePropertyName
+     3.更新状态---->组件界面更新
+       this.setState({
+         stateProp1:value1,
+         stateProp2:value2
+       })
+  举例1：点击标题更新切换数据
+  class LikeMe extends React.Component{
+     constructor(pros){
+       super(props);
+       this.handleClick=this.handleclick.bind(this)
+       this.state={
+       isLikeMe:true
+       }
+     }
+     handleClick(){
+     //this.state.isLikeMe=!this.state.isLikeMe; 直接更新state不会更新界面
+       this.setState({
+           isLikeMe: !this.state.isLikeMe
+        })
+    }
+    render(){
+       var text=this.state.isLikeMe? 'I like you':'you like me';
+        return <h2  onClick={this.handleClick}>{text}</h2>
+     }
+  }
+
+  举例2:
+ class TodoList extends React.Component{
+    render(){
+        return (
+         <ul>
+          {
+          this.props.map((todo,index)=><li key={index}>{todo}</li>)
+          }
+        </ul>
+       )
+    }
+}
+   TodoList.propTypes={
+        todos:React.PropTypes.array.isRequired
+   }
+  // 应用组件
+  class App extends React.Component{
+    constructor(props){
+        super(props);
+       this.addTodo=this.addTodo.bind(this);
+       this.state = {
+        todos:['吃饭','休息','写代码']
+      }
+    }
+    addTodo(){
+       var inputTodo=this.refs.inputTodo.value;
+     if(inputTodo.trim()==''){return;}
+        var todos=this.state.todos;
+        todos.unshift(inputTodo);
+        this.setState({
+           todos:todos
+        })
+       //移除输入的数据
+       this.refs.inputTodo.value='';
+      }
+    
+    render(){
+       return(
+          <div>
+             <h2>输入之后点击增加列表项</h2>
+             <input type='text' ref='inputTodo'/>
+             <button onClick={this.addTodo}>添加#{this.state.todos.length+1}</button>
+             <TodoList todos={this.state.todos}/>
+         </div>
+        )
+     }
+  }
+  ReactDOM.render(<App/>,document.getElementById('root');
 
   
   
